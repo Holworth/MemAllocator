@@ -4,8 +4,8 @@
 // ask for allocation for size bytes
 // return heap address before sbrk();
 void *sys_malloc_alloc(size_t size) {
-    void *p = sbrk(size); 
     void *q = sbrk(0);
+    void *p = sbrk(size); 
     if(p == (void*)(-1))
         return NULL;
     else 
