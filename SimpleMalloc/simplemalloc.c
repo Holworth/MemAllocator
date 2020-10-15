@@ -3,7 +3,7 @@
 #define ALLOC_ALIGNMENT
 #define SYS_ALIGNMENT
 
-// do not put global variables in header file
+// do not put global variables in header file !!!
 static const size_t default_append_size  = 4096;
 static const size_t alloc_alignment_size = 4;
 static const size_t sys_alignment_size   = 4096;
