@@ -1,6 +1,7 @@
 #include "malloctest.h"
 
 
+const size_t max_thread_num = 10;
 static inline uint64_t time_of_micros(){
     struct timeval tv;
     gettimeofday(&tv, NULL);
@@ -43,4 +44,12 @@ void singlethread_test() {
 void multithread_test() {
     void *p = s_malloc_init();
     if(p == NULL) return;
+
+    pthread_t tids[max_thread_num];
+    for(size_t idx = 0; idx < max_thread_num; ++idx){
+        int ret = pthread_create(&tids[idx], NULL, singlethread_malloc, NULL);
+        if(ret != 0) {
+            fprintf(stderr, "pthread create error\n");
+        }
+    }
 }
