@@ -6,6 +6,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
+#define SINGLETHREAD_TEST
 
 void singlethread_test();
 void multithread_test();

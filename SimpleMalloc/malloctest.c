@@ -28,7 +28,7 @@ void singlethread_malloc() {
     }
 
     uint64_t end_time = time_of_micros();
-    printf("tid:%d time passed:%4.lfs\n", (unsigned int)tid,
+    printf("tid:%u time passed:%4.lfs\n", (unsigned int)tid,
                 (double)(end_time-start_time)/1000000);
     
 }
