@@ -18,7 +18,7 @@ void singlethread_malloc() {
 
     uint64_t start_time = time_of_micros();
 
-    for(; idx <= 100; ++idx) {
+    for(; idx <= 10000; ++idx) {
         size_t malloc_size = rand() % 1024;
         ret = s_malloc(malloc_size);
         if(ret == NULL) {
@@ -28,8 +28,9 @@ void singlethread_malloc() {
     }
 
     uint64_t end_time = time_of_micros();
-    printf("tid:%u time passed:%4.lfs\n", (unsigned int)tid,
-                (double)(end_time-start_time)/1000000);
+    printf("tid:%u\n  time passed:%.8lfs\n  each %.4lfus\n", (unsigned int)tid,
+                (double)(end_time-start_time)/1000000,
+                (double)(end_time-start_time)/idx);
     
 }
 
