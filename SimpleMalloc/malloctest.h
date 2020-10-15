@@ -7,8 +7,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-inline uint64_t time_of_micros();
-
 void singlethread_test();
 void multithread_test();
 void singlethread_malloc();

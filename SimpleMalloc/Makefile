@@ -1,0 +1,19 @@
+OBJS = simplemalloc.o malloctest.o main.o
+
+CC	 	= gcc
+TARGET 	= main
+CFLAGS  = -Wall -g
+CLIB	= -pthread
+INCLUDE = ./
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@ $(CLIB) -I $(INCLUDE)
+
+$(TARGET): $(OBJS)
+	$(CC) $(OBJS) $(CFLAGS) -o $(TARGET) $(CLIB)
+
+default:
+	make $(TARGET)
+
+clean:
+	rm -rf *.o $(TARGET)

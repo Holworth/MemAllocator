@@ -1,12 +1,10 @@
-#include <malloctest.h>
+#include "malloctest.h"
 
 
-inline uint64_t time_of_micros() {
-
+static inline uint64_t time_of_micros(){
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return (uint64_t)tv.tv_sec * 1000000 + tv.tv_usec;
-
 }
 
 void singlethread_malloc() {
@@ -30,7 +28,7 @@ void singlethread_malloc() {
     }
 
     uint64_t end_time = time_of_micros();
-    printf("tid:%d time passed:%4.lfs\n", 
+    printf("tid:%d time passed:%4.lfs\n", (unsigned int)tid,
                 (double)(end_time-start_time)/1000000);
     
 }

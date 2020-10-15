@@ -1,6 +1,15 @@
 #include "simplemalloc.h"
 #include <stdio.h>
 
+// do not put global variables in header file
+static const size_t default_append_size  = 4096;
+static const size_t alignment_size = 4;
+static const size_t default_init_size = 4096;
+static void *heap_ptr;
+static unsigned int mem_size = 0;
+static unsigned int cur_mem_offset = 0;
+static pthread_mutex_t mem_lock; 
+
 // ask for allocation for size bytes
 // return heap address before sbrk();
 void *sys_malloc_alloc(size_t size) {
