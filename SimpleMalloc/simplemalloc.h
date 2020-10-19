@@ -9,6 +9,11 @@
 #include <assert.h>
 #define max(a, b) ((a) > (b)) ? (a) : (b)
 
+/*
+    s_malloc means simple malloc,
+    which only supports malloc, to be more specific,
+    append-only malloc.
+*/
 void *s_malloc_init();
 void *s_malloc(size_t size);
 void *sys_malloc_alloc(size_t size);
