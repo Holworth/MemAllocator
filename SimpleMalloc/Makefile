@@ -3,7 +3,7 @@ OBJS = simplemalloc.o malloctest.o main.o
 CC	 	= gcc
 TARGET 	= main
 CFLAGS  = -Wall -g
-CLIB	= -pthread
+CLIB	= -lpthread
 INCLUDE = ./
 
 %.o: %.c

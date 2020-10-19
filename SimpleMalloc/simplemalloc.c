@@ -9,8 +9,13 @@ static const size_t alloc_alignment_size = 4;
 static const size_t sys_alignment_size   = 4096;
 static const size_t default_init_size = 4096;
 static void *heap_ptr;
+// heap point
 static unsigned int mem_size = 0;
+// how much memory has been allocate: include alignment
 static unsigned int cur_mem_offset = 0;
+// how much memory acctually used
+// there are fragment between actually usable memory and allocated memory
+static unsigned int cur_mem_usable = 0;
 static pthread_mutex_t mem_lock; 
 
 // ask for allocation for size bytes
@@ -75,6 +80,22 @@ void *s_malloc(size_t size) {
 
     char *ret = (char *)heap_ptr + cur_mem_offset;
     cur_mem_offset += alloc_size;
+    // add size means these memory are actually usable
+    cur_mem_usable += size;
     pthread_mutex_unlock(&mem_lock);
     return (void *)ret;
 }
+
+void s_malloc_print(){
+
+    printf("[Heap Base]: %p\n", heap_ptr);
+    printf("[Heap Top ]: %p\n", heap_ptr+mem_size);
+    printf("[System Memory Allocated]: %u Bytes(%.6lf KB)\n", mem_size, 
+                                                            (double)mem_size / 1024);
+    printf("[Memory Actually Allocated]: %u Bytes(%.6lf KB)\n", cur_mem_offset,
+                                                            (double)cur_mem_offset / 1024);
+    printf("[User Memory require]: %u Bytes(%.6lf KB)\n", cur_mem_usable, 
+                                                            (double)cur_mem_usable / 1024);
+    printf("Usable Percentage :%.4lf%%\n", (double)cur_mem_usable/cur_mem_offset * 100);
+}
+

@@ -8,48 +8,64 @@ static inline uint64_t time_of_micros(){
     return (uint64_t)tv.tv_sec * 1000000 + tv.tv_usec;
 }
 
-void singlethread_malloc() {
 
-    pthread_t tid;
-    tid = pthread_self();
+void *thread_task(void *param) {
+    thread_param_t *params = (thread_param_t *)param;
+    int64_t max_times = params->max_malloc_times_;
+    int64_t seed = params->malloc_size_seed_;
+    pthread_t tid = pthread_self();
+
     // set rand seed
-    srand((unsigned int)tid);
-    void *ret = NULL;
-    size_t idx = 1;
+    srand((unsigned int)seed);
+
+    void *malloc_ret = NULL;
 
     uint64_t start_time = time_of_micros();
 
-    for(; idx <= 10000; ++idx) {
+    size_t idx = 1;
+    for(; idx <= max_times; ++idx){
         size_t malloc_size = rand() % 1024;
-        ret = s_malloc(malloc_size);
-        if(ret == NULL) {
+        malloc_ret = s_malloc(malloc_size);
+        if(malloc_ret == NULL) {
             fprintf(stderr, "failed to malloc");
-            break;
+            return NULL;
         }
     }
 
     uint64_t end_time = time_of_micros();
+
     printf("tid:%u\n  time passed:%.8lfs\n  each %.4lfus\n", (unsigned int)tid,
                 (double)(end_time-start_time)/1000000,
                 (double)(end_time-start_time)/idx);
-    
+    return malloc_ret;
 }
 
-void singlethread_test() {
-    void *p = s_malloc_init();
-    if(p == NULL) return;
-    singlethread_malloc();
-}
+void run_test(int argc, char **argv) {
+    uint64_t n;
+    int thread_num = 1;
+    uint64_t malloc_times = 1000;
 
-void multithread_test() {
-    void *p = s_malloc_init();
-    if(p == NULL) return;
-
-    pthread_t tids[max_thread_num];
-    for(size_t idx = 0; idx < max_thread_num; ++idx){
-        int ret = pthread_create(&tids[idx], NULL, singlethread_malloc, NULL);
-        if(ret != 0) {
-            fprintf(stderr, "pthread create error\n");
+    for(int i = 0; i < argc; ++i) {
+        if (sscanf(argv[i], "--thread_num=%llu", &n)) {
+            thread_num = n;
+        } else if(sscanf(argv[i], "--malloc_times=%llu", &n)) {
+            malloc_times = n;
+        } else if(i > 0) {
+            printf("Error parameters: [%s]\n", argv[i]);
+            return;
         }
+    }
+    thread_param_t threads_params_[MAX_TEST_THREAD_NUM];
+    pthread_t threads_[MAX_TEST_THREAD_NUM];
+
+
+    for(int i = 0; i < thread_num; ++i) {
+        threads_params_[i].max_malloc_times_ = malloc_times;
+        threads_params_[i].malloc_size_seed_ = i;
+        pthread_create(threads_+i, NULL, thread_task, (void*)(threads_params_+i));
+    }
+
+    for(int i = 0; i < thread_num; ++i) {
+        pthread_join(threads_[i], NULL);
     }
 }
