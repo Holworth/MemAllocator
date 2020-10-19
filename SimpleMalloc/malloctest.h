@@ -2,6 +2,7 @@
 #define MALLOCTEST_H_
 
 #include "simplemalloc.h"
+#include "multimalloc.h"
 #include <sys/time.h>
 #include <pthread.h>
 #include <stdlib.h>

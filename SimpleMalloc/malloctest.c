@@ -41,6 +41,7 @@ void *thread_task(void *param) {
 }
 
 void run_test(int argc, char **argv) {
+
     uint64_t n;
     int thread_num = 1;
     uint64_t malloc_times = 1000;

@@ -16,7 +16,7 @@
 */
 
 void *m_malloc_init();
-void *m_malloc(size_t size);
+void *m_malloc(int tid, size_t size);
 void *sys_malloc_alloc_m(size_t size);
 void m_malloc_print();
 
