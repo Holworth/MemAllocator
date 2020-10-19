@@ -10,10 +10,13 @@
 //#define SINGLETHREAD_TEST
 #define MAX_TEST_THREAD_NUM     (32)
 
-
+typedef enum malloc_type { simple_malloc, 
+                            multi_malloc } malloc_type_t;
 typedef struct thread_param {
     uint64_t max_malloc_times_;
     int64_t malloc_size_seed_;
+    malloc_type_t param_type;
+    int tid;
 } thread_param_t;
 
 void multithread_test(int thread_num);

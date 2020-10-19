@@ -1,7 +1,8 @@
 #include "multimalloc.h"
 #include <stdio.h>
 
-#define MAX_MALLOC_THREAD_NUM   (32)
+#define M_SYS_ALIGNMENT
+#define M_ALLOC_ALIGNMENT
 
 static const size_t default_append_size_per_thread = 4096;
 static const size_t m_sys_alignment_size = 4096;
@@ -23,7 +24,7 @@ void *sys_malloc_alloc_m(size_t size) {
     void *cur_heap_top = sbrk(0);
 
     size_t sys_alloc_size = 
-    #ifdef SYS_ALIGNMENT
+    #ifdef M_SYS_ALIGNMENT
         (size - 1) / m_sys_alignment_size * m_sys_alignment_size
         + m_sys_alignment_size;
     #else
@@ -65,14 +66,14 @@ void *m_malloc_init() {
 
 void *m_malloc(int tid, size_t size) {
     size_t alloc_size = 
-        #ifdef ALLOC_ALIGNMENT
+        #ifdef M_ALLOC_ALIGNMENT
             (size - 1) / m_alloc_alignment_size * m_alloc_alignment_size
             + m_alloc_alignment_size;
         #else
             size;
         #endif
     
-    if(thread_mem_offset[tid] + alloc_size > thread_mem_len) {
+    if(thread_mem_offset[tid] + alloc_size > thread_mem_len[tid]) {
         // system malloc new memory;
         // if new memory is already allocated:
         pthread_mutex_lock(&m_malloc_lock);
@@ -90,7 +91,7 @@ void *m_malloc(int tid, size_t size) {
                 return NULL;
             }
             for(int i = 0; i < MAX_MALLOC_THREAD_NUM; ++i) {
-                thread_mem_next_base[i] = new_heap + i * sys_alloc_size_per_thread;
+                thread_mem_next_base[i] = (uint64_t)new_heap + i * sys_alloc_size_per_thread;
                 thread_mem_next_len[i] = sys_alloc_size_per_thread;
             }
             thread_mem_base[tid] = thread_mem_next_base[tid];
@@ -100,7 +101,11 @@ void *m_malloc(int tid, size_t size) {
         pthread_mutex_unlock(&m_malloc_lock);
     }
 
-    char *ret = thread_mem_base[tid] + thread_mem_offset[tid];
+    char *ret = (char *)thread_mem_base[tid] + thread_mem_offset[tid];
     thread_mem_offset[tid] += size;
     return (void *)ret;
+}
+
+void m_malloc_print() {
+    return;
 }

@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <pthread.h>
 #include <assert.h>
+#define MAX_MALLOC_THREAD_NUM   (32)
 #define max(a, b) ((a) > (b)) ? (a) : (b)
 #define min(a, b) ((a) < (b)) ? (a) : (b)
 

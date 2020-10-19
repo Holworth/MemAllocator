@@ -1,7 +1,7 @@
 #include "simplemalloc.h"
 #include <stdio.h>
-#define ALLOC_ALIGNMENT
-#define SYS_ALIGNMENT
+#define S_ALLOC_ALIGNMENT
+#define S_SYS_ALIGNMENT
 
 // do not put global variables in header file !!!
 static const size_t default_append_size  = 4096;
@@ -24,7 +24,7 @@ void *sys_malloc_alloc(size_t size) {
     void *q = sbrk(0);
 
     size_t sys_alloc_size = 
-    #ifdef SYS_ALIGNMENT
+    #ifdef S_SYS_ALIGNMENT
         (size - 1) / sys_alignment_size * sys_alignment_size 
             + sys_alignment_size;
     #else
@@ -59,7 +59,7 @@ void *s_malloc_init() {
 
 void *s_malloc(size_t size) {
     size_t alloc_size = 
-        #ifdef ALLOC_ALIGNMENT
+        #ifdef S_ALLOC_ALIGNMENT
             (size - 1) / alloc_alignment_size * alloc_alignment_size 
                        + alloc_alignment_size;
         #else
