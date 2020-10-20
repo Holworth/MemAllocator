@@ -149,7 +149,7 @@ void m_malloc_print() {
     for(int i = 0; i < m_malloc_thread_num; ++i) {
         total_mem_usable += thread_usable_mem[i];
     }
-    printf("[Total Mem Usable Percentage]: %.4lf%%\n", (double)total_mem_usable / total_mem_size);
+    printf("[Total Mem Usable Percentage]: %.4lf%%\n", (double)total_mem_usable / total_mem_size * 100);
     printf(">>>[Total Mem System Allocated]: %.6lfMB(%luBytes)\n", (double)total_mem_size / bytes_per_MB, total_mem_size);
     printf(">>>[Total Mem User Ask]: %.6lfMB(%luBytes)\n", (double)total_mem_usable / bytes_per_MB, total_mem_usable);
     printf(">>>[System Malloc Times]:%lu\n", m_sys_alloc_times);
