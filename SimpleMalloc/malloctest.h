@@ -3,6 +3,7 @@
 
 #include "simplemalloc.h"
 #include "multimalloc.h"
+#include "atomic_lock.h"
 #include <sys/time.h>
 #include <pthread.h>
 #include <stdlib.h>
@@ -26,7 +27,6 @@ typedef struct thread_param {
     int tid;
 } thread_param_t;
 
-void multithread_test(int thread_num);
 void *thread_task_exectime_test(void *param);
 void run_test(int argc, char **argv);
 

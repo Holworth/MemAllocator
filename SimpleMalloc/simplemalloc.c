@@ -1,4 +1,5 @@
 #include "simplemalloc.h"
+#include "atomic_lock.h"
 #include <stdio.h>
 #define S_ALLOC_ALIGNMENT
 #define S_SYS_ALIGNMENT
@@ -16,7 +17,12 @@ static unsigned int cur_mem_offset = 0;
 // how much memory acctually used
 // there are fragment between actually usable memory and allocated memory
 static unsigned int cur_mem_usable = 0;
+
+#ifdef ATOMIC_SPIN_LOCK
+volatile atomic_lock_t lock;
+#else
 static pthread_mutex_t mem_lock; 
+#endif
 
 // ask for allocation for size bytes
 // return heap address before sbrk();
@@ -61,7 +67,7 @@ void *s_malloc(size_t size) {
     size_t alloc_size = 
         #ifdef S_ALLOC_ALIGNMENT
             (size - 1) / alloc_alignment_size * alloc_alignment_size 
-                       + alloc_alignment_size;
+                        + alloc_alignment_size;
         #else
             size;
         #endif

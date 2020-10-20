@@ -1,4 +1,4 @@
-OBJS = simplemalloc.o multimalloc.o malloctest.o main.o
+OBJS = simplemalloc.o multimalloc.o malloctest.o atomic_lock.o main.o
 
 CC	 	= gcc
 TARGET 	= main
