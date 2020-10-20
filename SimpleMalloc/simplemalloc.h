@@ -8,6 +8,7 @@
 #include <pthread.h>
 #include <assert.h>
 #define max(a, b) ((a) > (b)) ? (a) : (b)
+#define ATOMIC_SPIN     1
 
 /*
     s_malloc means simple malloc,

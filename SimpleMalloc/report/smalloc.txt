@@ -1,0 +1,224 @@
+[Simple Malloc]
+
+[Thread Num = 1 Malloc Times=100000]
+tid:2095392320
+  time passed:0.12598300s
+  each 0.1260us
+[Heap Base]: 0x555f4cc61000
+[Heap Top ]: 0x555f6b540000
+[System Memory Allocated]: 512618496 Bytes(500604.000000 KB)
+[Memory Actually Allocated]: 512615536 Bytes(500601.109375 KB)
+[User Memory require]: 511116419 Bytes(499137.127930 KB)
+Usable Percentage :99.7076%
+
+[Thread Num = 4 Malloc Times=100000]
+tid:3017320000
+  time passed:1.39929200s
+  each 1.3993us
+tid:3008927296
+  time passed:1.42590800s
+  each 1.4259us
+tid:3000534592
+  time passed:1.42642400s
+  each 1.4264us
+tid:2992141888
+  time passed:1.42741200s
+  each 1.4274us
+[Heap Base]: 0x55b8ededb000
+[Heap Top ]: 0x55b96834b000
+[System Memory Allocated]: 2051473408 Bytes(2003392.000000 KB)
+[Memory Actually Allocated]: 2051470532 Bytes(2003389.191406 KB)
+[User Memory require]: 2045471384 Bytes(1997530.648438 KB)
+Usable Percentage :99.7076%
+
+[Thread Num = 8 Malloc Times=100000]
+tid:1272841792
+  time passed:7.25982600s
+  each 7.2598us
+tid:1281234496
+  time passed:7.48428200s
+  each 7.4843us
+tid:1247663680
+  time passed:7.50811900s
+  each 7.5081us
+tid:1230878272
+  time passed:7.51070200s
+  each 7.5107us
+tid:1264449088
+  time passed:7.54452900s
+  each 7.5445us
+tid:1239270976
+  time passed:7.55701700s
+  each 7.5570us
+tid:1256056384
+  time passed:7.57202100s
+  each 7.5720us
+tid:1289627200
+  time passed:7.57270300s
+  each 7.5727us
+[Heap Base]: 0x56341ac2a000
+[Heap Top ]: 0x56350f758000
+[System Memory Allocated]: 4105363456 Bytes(4009144.000000 KB)
+[Memory Actually Allocated]: 4105359948 Bytes(4009140.574219 KB)
+[User Memory require]: 4093359508 Bytes(3997421.394531 KB)
+Usable Percentage :99.7077%
+
+[Thread Num = 16 Malloc Times=100000]
+tid:634275392
+  time passed:13.55731000s
+  each 13.5573us
+tid:693024320
+  time passed:13.73087100s
+  each 13.7309us
+tid:701417024
+  time passed:13.97900500s
+  each 13.9790us
+tid:609097280
+  time passed:14.00876100s
+  each 14.0087us
+tid:676238912
+  time passed:14.16699800s
+  each 14.1670us
+tid:709809728
+  time passed:14.22529600s
+  each 14.2253us
+tid:617489984
+  time passed:14.22682400s
+  each 14.2268us
+tid:718202432
+  time passed:14.24504200s
+  each 14.2450us
+tid:600704576
+  time passed:14.26547000s
+  each 14.2655us
+tid:592311872
+  time passed:14.31377500s
+  each 14.3138us
+tid:642668096
+  time passed:14.35233600s
+  each 14.3523us
+tid:684631616
+  time passed:14.35247300s
+  each 14.3525us
+tid:651060800
+  time passed:14.36478500s
+  each 14.3648us
+tid:625882688
+  time passed:14.36015500s
+  each 14.3601us
+tid:667846208
+  time passed:14.37196600s
+  each 14.3720us
+tid:659453504
+  time passed:14.37245900s
+  each 14.3724us
+[Heap Base]: 0x56133c218000
+[Heap Top ]: 0x56142571d000
+[System Memory Allocated]: 3914354688 Bytes(3822612.000000 KB)
+[Memory Actually Allocated]: 3914353184 Bytes(3822610.531250 KB)
+[User Memory require]: 3890353758 Bytes(3799173.591797 KB)
+Usable Percentage :99.3869%
+
+[Thread Num = 32 Malloc Times=100000]
+tid:3752257088
+  time passed:36.82749200s
+  each 36.8275us
+tid:3777435200
+  time passed:37.00939400s
+  each 37.0094us
+tid:3794220608
+  time passed:37.43936600s
+  each 37.4393us
+tid:3643151936
+  time passed:37.57252400s
+  each 37.5725us
+tid:3567617600
+  time passed:37.98369400s
+  each 37.9837us
+tid:3676722752
+  time passed:38.10750500s
+  each 38.1075us
+tid:3651544640
+  time passed:38.19387900s
+  each 38.1938us
+tid:3802613312
+  time passed:38.24332500s
+  each 38.2433us
+tid:3584403008
+  time passed:38.23805200s
+  each 38.2380us
+tid:3718686272
+  time passed:38.25157300s
+  each 38.2515us
+tid:3617973824
+  time passed:38.23289100s
+  each 38.2329us
+tid:3592795712
+  time passed:38.29679200s
+  each 38.2968us
+tid:3626366528
+  time passed:38.29914000s
+  each 38.2991us
+tid:3659937344
+  time passed:38.46980900s
+  each 38.4698us
+tid:3710293568
+  time passed:38.55916200s
+  each 38.5591us
+tid:3769042496
+  time passed:38.59087300s
+  each 38.5908us
+tid:3785827904
+  time passed:38.59204600s
+  each 38.5920us
+tid:3727078976
+  time passed:38.65429900s
+  each 38.6543us
+tid:3685115456
+  time passed:38.67475700s
+  each 38.6747us
+tid:3634759232
+  time passed:38.76614400s
+  each 38.7661us
+tid:3735471680
+  time passed:38.78250600s
+  each 38.7825us
+tid:3760649792
+  time passed:38.81585900s
+  each 38.8158us
+tid:3550832192
+  time passed:38.81926900s
+  each 38.8192us
+tid:3559224896
+  time passed:38.86379500s
+  each 38.8638us
+tid:3693508160
+  time passed:38.88918300s
+  each 38.8891us
+tid:3743864384
+  time passed:38.89254700s
+  each 38.8925us
+tid:3609581120
+  time passed:38.88552800s
+  each 38.8855us
+tid:3542439488
+  time passed:38.91322300s
+  each 38.9132us
+tid:3701900864
+  time passed:38.92450100s
+  each 38.9245us
+tid:3668330048
+  time passed:38.92741400s
+  each 38.9274us
+tid:3576010304
+  time passed:38.93395000s
+  each 38.9339us
+tid:3601188416
+  time passed:38.93320300s
+  each 38.9332us
+[Heap Base]: 0x5568ce99e000
+[Heap Top ]: 0x5569a11a1000
+[System Memory Allocated]: 3531616256 Bytes(3448844.000000 KB)
+[Memory Actually Allocated]: 3531613056 Bytes(3448840.875000 KB)
+[User Memory require]: 3483612802 Bytes(3401965.626953 KB)
+Usable Percentage :98.6408%
