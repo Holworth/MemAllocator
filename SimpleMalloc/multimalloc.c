@@ -30,6 +30,7 @@ static uint64_t thread_usable_mem[MAX_MALLOC_THREAD_NUM];
 static uint64_t thread_sys_alloc_mem[MAX_MALLOC_THREAD_NUM];
 static pthread_mutex_t m_malloc_lock;
 static uint64_t m_sys_alloc_times = 0;
+int m_malloc_thread_num = 1;
 
 
 // sys_malloc_alloc_m is only allowed used
@@ -68,12 +69,11 @@ void *m_malloc_init() {
     void *ret = sys_malloc_alloc_m(init_sys_alloc_size);
     if(ret) {
         m_heap_ptr = ret;
-        m_sys_alloc_times = 1;
     } else {
         return NULL;
     }
 
-    for(int i = 0; i < MAX_MALLOC_THREAD_NUM; ++i) {
+    for(int i = 0; i < m_malloc_thread_num; ++i) {
         thread_mem_base[i] = (uint64_t)m_heap_ptr + i * default_append_size_per_thread;
         thread_mem_offset[i] = 0;
         thread_mem_len[i] = default_append_size_per_thread;
@@ -82,6 +82,8 @@ void *m_malloc_init() {
         thread_usable_mem[i] = 0;
         thread_sys_alloc_mem[i] = default_append_size_per_thread;
     }
+    m_sys_alloc_times = 1;
+    total_mem_usable = 0;
     return m_heap_ptr;
 }
 
@@ -113,7 +115,7 @@ void *m_malloc(int tid, size_t size) {
             // no new memory or new memory is not enough;
             // allocate new memory first
             size_t sys_alloc_size_per_thread = max(default_append_size_per_thread, alloc_size);
-            void *new_heap = sys_malloc_alloc_m(sys_alloc_size_per_thread * MAX_MALLOC_THREAD_NUM);
+            void *new_heap = sys_malloc_alloc_m(sys_alloc_size_per_thread * m_malloc_thread_num);
             m_sys_alloc_times += 1;
 
             if(new_heap == NULL) {
@@ -122,7 +124,7 @@ void *m_malloc(int tid, size_t size) {
                 return NULL;
             }
             // set the next array;
-            for(int i = 0; i < MAX_MALLOC_THREAD_NUM; ++i) {
+            for(int i = 0; i < m_malloc_thread_num; ++i) {
                 thread_mem_next_base[i] = (uint64_t)new_heap + i * sys_alloc_size_per_thread;
                 thread_mem_next_len[i] = sys_alloc_size_per_thread;
                 // system malloc monitor
@@ -131,7 +133,6 @@ void *m_malloc(int tid, size_t size) {
 
             switch_to_next_interval(tid);
         }
-        total_mem_usable += size;
         pthread_mutex_unlock(&m_malloc_lock);
     }
     // allocate new memory
@@ -144,13 +145,17 @@ void *m_malloc(int tid, size_t size) {
 // Alert: m_malloc_print must be used after m_malloc_init executes;
 void m_malloc_print() {
     pthread_mutex_lock(&m_malloc_lock);
+
+    for(int i = 0; i < m_malloc_thread_num; ++i) {
+        total_mem_usable += thread_usable_mem[i];
+    }
     printf("[Total Mem Usable Percentage]: %.4lf%%\n", (double)total_mem_usable / total_mem_size);
     printf(">>>[Total Mem System Allocated]: %.6lfMB(%luBytes)\n", (double)total_mem_size / bytes_per_MB, total_mem_size);
     printf(">>>[Total Mem User Ask]: %.6lfMB(%luBytes)\n", (double)total_mem_usable / bytes_per_MB, total_mem_usable);
     printf(">>>[System Malloc Times]:%lu\n", m_sys_alloc_times);
     pthread_mutex_unlock(&m_malloc_lock);
 
-    for(int i = 0; i < MAX_MALLOC_THREAD_NUM; ++i) {
+    for(int i = 0; i < m_malloc_thread_num; ++i) {
         assert(thread_sys_alloc_mem[i] != 0);
         printf("\n\n");
         printf("[tid %2d Mem Usable Percentage]: %.4lf%%\n", i, 

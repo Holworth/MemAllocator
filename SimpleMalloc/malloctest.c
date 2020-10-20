@@ -1,7 +1,8 @@
 #include "malloctest.h"
 
 
-const size_t max_thread_num = 10;
+extern int m_malloc_thread_num;
+
 static inline uint64_t time_of_micros(){
     struct timeval tv;
     gettimeofday(&tv, NULL);
@@ -62,6 +63,7 @@ void run_test(int argc, char **argv) {
     for(int i = 0; i < argc; ++i) {
         if (sscanf(argv[i], "--thread_num=%llu", &n)) {
             thread_num = n;
+            m_malloc_thread_num = n;
         } else if(sscanf(argv[i], "--malloc_times=%llu", &n)) {
             malloc_times = n;
         } else if(sscanf(argv[i], "--malloc_type=%llu", &n)) {
