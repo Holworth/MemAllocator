@@ -1,5 +1,7 @@
 #include "multimalloc.h"
+#include "atomic_lock.h"
 #include <stdio.h>
+
 
 #define M_SYS_ALIGNMENT
 #define M_ALLOC_ALIGNMENT

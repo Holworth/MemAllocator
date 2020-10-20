@@ -18,7 +18,7 @@ static unsigned int cur_mem_offset = 0;
 // there are fragment between actually usable memory and allocated memory
 static unsigned int cur_mem_usable = 0;
 
-#ifdef ATOMIC_SPIN_LOCK
+#ifdef ATOMIC_SPIN
 volatile atomic_lock_t lock;
 #else
 static pthread_mutex_t mem_lock; 
@@ -48,10 +48,15 @@ void *sys_malloc_alloc(size_t size) {
 
 void *s_malloc_init() {
 
-    if(pthread_mutex_init(&mem_lock, NULL) != 0) {
-        fprintf(stderr, "Initialize Mem Lock Failed\n");
-        return NULL;
-    }
+    #ifdef ATOMIC_SPIN
+        atomic_spin_init(&lock);
+    #else
+        if(pthread_mutex_init(&mem_lock, NULL) != 0) {
+            fprintf(stderr, "Initialize Mem Lock Failed\n");
+            return NULL;
+        }
+    #endif
+
     void *ret = sys_malloc_alloc(default_init_size);
     if(ret){
         heap_ptr = ret;
@@ -71,7 +76,11 @@ void *s_malloc(size_t size) {
         #else
             size;
         #endif
-    pthread_mutex_lock(&mem_lock); 
+    #ifdef ATOMIC_SPIN
+        atomic_spin_lock(&lock);
+    #else
+        pthread_mutex_lock(&mem_lock); 
+    #endif
     if(cur_mem_offset + alloc_size > mem_size) {
         // ask for memory from system
         // may not be aligned
@@ -79,7 +88,11 @@ void *s_malloc(size_t size) {
         void *new_heap = sys_malloc_alloc(sys_alloc_size);
         if(new_heap == NULL) {
             fprintf(stderr, "malloc failed\n");
-            pthread_mutex_unlock(&mem_lock);
+            #ifdef ATOMIC_SPIN
+                atomic_spin_unlock(&lock);
+            #else
+                pthread_mutex_unlock(&mem_lock);
+            #endif
             return NULL;
         } 
     }
@@ -88,7 +101,11 @@ void *s_malloc(size_t size) {
     cur_mem_offset += alloc_size;
     // add size means these memory are actually usable
     cur_mem_usable += size;
-    pthread_mutex_unlock(&mem_lock);
+    #ifdef ATOMIC_SPIN
+        atomic_spin_unlock(&lock);
+    #else
+        pthread_mutex_unlock(&mem_lock);
+    #endif
     return (void *)ret;
 }
 
