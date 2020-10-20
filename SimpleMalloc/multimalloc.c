@@ -85,6 +85,14 @@ void *m_malloc_init() {
     return m_heap_ptr;
 }
 
+static inline void switch_to_next_interval(int tid) {
+    thread_mem_base[tid] = thread_mem_next_base[tid];
+    thread_mem_len [tid] = thread_mem_next_len[tid];
+    thread_mem_offset[tid] = 0;
+    thread_mem_next_base[tid] = 0;
+    thread_mem_next_len [tid] = 0;
+}
+
 void *m_malloc(int tid, size_t size) {
     size_t alloc_size = 
         #ifdef M_ALLOC_ALIGNMENT
@@ -99,32 +107,34 @@ void *m_malloc(int tid, size_t size) {
         // if new memory is already allocated:
         pthread_mutex_lock(&m_malloc_lock);
         if(thread_mem_next_base[tid] != 0 && thread_mem_next_len[tid] >= alloc_size) {
-            thread_mem_base[tid] = thread_mem_next_base[tid];
-            thread_mem_next_base[tid] = 0;
-            thread_mem_offset[tid] = 0;
+            // directly switch to the next interval
+            switch_to_next_interval(tid);
         } else { 
-        // no new memory or new memory is not enough;
+            // no new memory or new memory is not enough;
+            // allocate new memory first
             size_t sys_alloc_size_per_thread = max(default_append_size_per_thread, alloc_size);
             void *new_heap = sys_malloc_alloc_m(sys_alloc_size_per_thread * MAX_MALLOC_THREAD_NUM);
             m_sys_alloc_times += 1;
+
             if(new_heap == NULL) {
                 fprintf(stderr, "system malloc (sbrk) failed\n");
                 pthread_mutex_unlock(&m_malloc_lock);
                 return NULL;
             }
+            // set the next array;
             for(int i = 0; i < MAX_MALLOC_THREAD_NUM; ++i) {
                 thread_mem_next_base[i] = (uint64_t)new_heap + i * sys_alloc_size_per_thread;
                 thread_mem_next_len[i] = sys_alloc_size_per_thread;
+                // system malloc monitor
                 thread_sys_alloc_mem[i] += sys_alloc_size_per_thread;
             }
-            thread_mem_base[tid] = thread_mem_next_base[tid];
-            thread_mem_next_base[tid] = 0;
-            thread_mem_offset[tid] = 0;
+
+            switch_to_next_interval(tid);
         }
         total_mem_usable += size;
         pthread_mutex_unlock(&m_malloc_lock);
     }
-
+    // allocate new memory
     char *ret = (char *)thread_mem_base[tid] + thread_mem_offset[tid];
     thread_mem_offset[tid] += alloc_size;
     thread_usable_mem[tid] += size;
