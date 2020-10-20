@@ -1,4 +1,5 @@
 #include "malloctest.h"
+#include <string.h>
 
 
 extern int m_malloc_thread_num;
@@ -10,12 +11,12 @@ static inline uint64_t time_of_micros(){
 }
 
 
-void *thread_task(void *param) {
+void *thread_task_exectime_test(void *param) {
 
     thread_param_t *params = (thread_param_t *)param;
     int64_t max_times = params->max_malloc_times_;
     int64_t seed = params->malloc_size_seed_;
-    malloc_type_t type = params->param_type;
+    malloc_type_t type = params->thread_malloc_type;
     pthread_t tid = pthread_self();
     int malloc_id = params->tid;
 
@@ -58,7 +59,11 @@ void run_test(int argc, char **argv) {
     uint64_t n;
     uint64_t malloc_times = 1000;
     int thread_num = 1;
-    malloc_type_t test_type = simple_malloc;
+
+    malloc_type_t test_malloc_type = simple_malloc;
+    malloc_test_type_t test_bench = exec_time_test;
+
+    char ch_test_type[32];
 
     for(int i = 0; i < argc; ++i) {
         if (sscanf(argv[i], "--thread_num=%llu", &n)) {
@@ -67,11 +72,17 @@ void run_test(int argc, char **argv) {
         } else if(sscanf(argv[i], "--malloc_times=%llu", &n)) {
             malloc_times = n;
         } else if(sscanf(argv[i], "--malloc_type=%llu", &n)) {
-            test_type = (n == 0) ? simple_malloc : multi_malloc;
+            test_malloc_type = (n == 0) ? simple_malloc : multi_malloc;
+        } else if(strncmp(argv[i], "--test_type=", 12) == 0) {
+            strcpy(ch_test_type, argv[i]+12);
         } else if(i > 0) {
             printf("Error parameters: [%s]\n", argv[i]);
             return;
         }
+    }
+    // parse parameters:
+    if (memcmp(ch_test_type, "exectime", 8) == 0) {
+        test_bench = exec_time_test;
     }
 
     assert(thread_num <= MAX_TEST_THREAD_NUM);
@@ -80,9 +91,9 @@ void run_test(int argc, char **argv) {
     pthread_t threads_[MAX_TEST_THREAD_NUM];
 
     // choose one to malloc
-    if(test_type == simple_malloc) {
+    if(test_malloc_type == simple_malloc) {
         s_malloc_init();
-    } else if(test_type == multi_malloc) {
+    } else if(test_malloc_type == multi_malloc) {
         m_malloc_init();
     }
 
@@ -90,17 +101,24 @@ void run_test(int argc, char **argv) {
         threads_params_[i].max_malloc_times_ = malloc_times;
         threads_params_[i].malloc_size_seed_ = i;
         threads_params_[i].tid = i;
-        threads_params_[i].param_type = test_type;
-        pthread_create(threads_+i, NULL, thread_task, (void*)(threads_params_+i));
+        threads_params_[i].thread_malloc_type = test_malloc_type;
+        switch (test_bench)
+        {
+        case exec_time_test:
+            pthread_create(threads_+i, NULL, thread_task_exectime_test, (void*)(threads_params_+i));
+            break;
+        default:
+            break;
+        }
     }
 
     for(int i = 0; i < thread_num; ++i) {
         pthread_join(threads_[i], NULL);
     }
 
-    if(test_type == simple_malloc) {
+    if(test_malloc_type == simple_malloc) {
         s_malloc_print();
-    } else if(test_type == multi_malloc) {
+    } else if(test_malloc_type == multi_malloc) {
         m_malloc_print();
     }
 }
